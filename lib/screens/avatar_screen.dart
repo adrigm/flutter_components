@@ -19,7 +19,11 @@ class AvatarScreen extends StatelessWidget {
         ],
       ),
       body: const Center(
-        child: Text('AvatarScreen'),
+        child: CircleAvatar(
+          maxRadius: 110,
+          backgroundImage:
+              NetworkImage('https://i.blogs.es/85aa44/stan-lee/1366_2000.jpg'),
+        ),
       ),
     );
   }
