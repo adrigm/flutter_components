@@ -38,12 +38,29 @@ class _ListviewBuilderScreenState extends State<ListviewBuilderScreen> {
     Add5();
     isLoading = false;
     setState(() {});
+
+    if (scrollController.position.pixels + 100 <=
+        scrollController.position.maxScrollExtent) return;
+
+    scrollController.animateTo(
+      scrollController.position.pixels + 120,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.fastOutSlowIn,
+    );
   }
 
   void Add5() {
     final lastId = imagesIds.length;
     imagesIds.addAll([1, 2, 3, 4, 5].map((e) => lastId + e));
     setState(() {});
+  }
+
+  Future<void> onRefresh() async {
+    await Future.delayed(const Duration(seconds: 2));
+    final lastId = imagesIds.last;
+    imagesIds.clear();
+    imagesIds.add(lastId);
+    Add5();
   }
 
   @override
@@ -58,26 +75,31 @@ class _ListviewBuilderScreenState extends State<ListviewBuilderScreen> {
         removeBottom: true,
         child: Stack(
           children: [
-            ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              controller: scrollController,
-              itemCount: imagesIds.length,
-              itemBuilder: (BuildContext context, int index) {
-                return FadeInImage(
-                  placeholder: const AssetImage('assets/jar-loading.gif'),
-                  width: double.infinity,
-                  height: 300,
-                  fit: BoxFit.cover,
-                  image: NetworkImage(
-                      'https://picsum.photos/500/300?image=${imagesIds[index]}'),
-                );
-              },
+            RefreshIndicator(
+              color: AppTheme.primary,
+              onRefresh: onRefresh,
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                controller: scrollController,
+                itemCount: imagesIds.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return FadeInImage(
+                    placeholder: const AssetImage('assets/jar-loading.gif'),
+                    width: double.infinity,
+                    height: 300,
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                        'https://picsum.photos/500/300?image=${imagesIds[index]}'),
+                  );
+                },
+              ),
             ),
-            Positioned(
-              bottom: 40,
-              left: size.width * 0.5 - 30,
-              child: const _LoadingIcon(),
-            )
+            if (isLoading)
+              Positioned(
+                bottom: 40,
+                left: size.width * 0.5 - 30,
+                child: const _LoadingIcon(),
+              )
           ],
         ),
       ),
