@@ -31,6 +31,14 @@ class AppTheme {
         elevation: 0,
       ),
     ),
+    inputDecorationTheme: const InputDecorationTheme(
+        floatingLabelStyle: TextStyle(color: primary),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: primary),
+          borderRadius: BorderRadius.only(
+            bottomRight: Radius.circular(10),
+          ),
+        )),
   );
 
   static final ThemeData darkTheme = ThemeData.dark().copyWith(
